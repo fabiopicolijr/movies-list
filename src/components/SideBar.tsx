@@ -11,36 +11,37 @@ interface GenreResponseProps {
   title: string;
 }
 
-export function SideBar() {  
-  const [selectedGenreId, setSelectedGenreId] = useState(1);
-  const [genres, setGenres] = useState<GenreResponseProps[]>([]);  
+interface SideBarProps {
+  onSelectGenre: (id: number) => void;
+  selectedGenreId: number;
+}
+
+export function SideBar({ onSelectGenre, selectedGenreId }: SideBarProps) {
+  const [genres, setGenres] = useState<GenreResponseProps[]>([]);
 
   useEffect(() => {
-    api.get<GenreResponseProps[]>('genres').then(response => {
+    api.get<GenreResponseProps[]>(`genres`).then((response) => {
       setGenres(response.data);
     });
   }, []);
 
-  function handleClickButton(id: number) {
-    setSelectedGenreId(id);
-  }
-
   return (
     <nav className="sidebar">
-      <span>Watch<p>Me</p></span>
+      <span>
+        Watch<p>Me</p>
+      </span>
 
       <div className="buttons-container">
-        {genres.map(genre => (
+        {genres.map((genre) => (
           <Button
             key={String(genre.id)}
             title={genre.title}
             iconName={genre.name}
-            onClick={() => handleClickButton(genre.id)}
+            onClick={() => onSelectGenre(genre.id)}
             selected={selectedGenreId === genre.id}
           />
         ))}
       </div>
-
     </nav>
-  )  
+  );
 }
